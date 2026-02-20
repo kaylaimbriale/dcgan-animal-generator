@@ -40,29 +40,36 @@ Radford et al., *Unsupervised Representation Learning with Deep Convolutional Ge
 
 ## Dataset & Data Pipeline
 
-Dataset: Kaggle Animals Dataset  
+Original Dataset Source: Kaggle Animals Dataset  
 https://www.kaggle.com/datasets/antobenedetti/animals  
 
-- ~15,000 images across dogs, horses, cats, lions, and elephants  
-- Initial experiments focused on generating dog images  
+The dataset is not included in this repository due to size.
 
-To reduce training time and improve stability:
+For reproducibility, the notebook downloads a packaged version of the dataset (`animal_dataset.zip`) via Google Drive using `gdown`, then extracts it into:
 
-- Images resized from 512×512 to 128×128  
-- Converted to grayscale (3 channels → 1 channel)  
-- Preprocessed images saved to structured folders  
+data/animals/
+
+The dataset follows a standard PyTorch `ImageFolder` structure with `train/` and `val/` splits.
+
+To train on a specific animal class, set:
+- `dataset = 'dog'` (or another class name)
+- `dataset = 'all'` to use the full dataset
+
+Images are resized to 128×128 during loading using torchvision transforms.
 
 ---
 
 ## Training Details
 
-- Optimizer: Adam  
-- Learning Rate: 0.0002  
-- Loss Function: Binary Cross Entropy (BCE)  
-- Latent Dimension: 100  
-- Image Size: 128×128  
+Default configuration in the notebook:
+- Batch Size: 128
+- Image Size: 128×128
+- Channels: 3 (RGB)
+- Epochs: 10
+- Loss Function: Binary Cross Entropy (BCE)
+- Optimizer: Adam (DCGAN-style training)
 
-GAN training is inherently unstable and prone to issues such as mode collapse. I experimented with preprocessing strategies and alternative loss functions (including Wasserstein loss) to improve convergence and output diversity.
+The notebook also includes evaluation code using FID via `torchmetrics`.
 
 ---
 
@@ -70,12 +77,17 @@ GAN training is inherently unstable and prone to issues such as mode collapse. I
 
 After training:
 
-![Dogs](images/generated_dogs_epoch_500.png)
-![Cats](images/generated_cats_epoch_500.png)
-![Lions](images/generated_lions_epoch_400.png)
-![Elephants](images/generated_elephants_epoch_520.png)
-![Horses](images/generated_horses_epoch_650.png)
-![All](images/generated_all_epoch_120.png)
+<p align="center">
+  <img src="images/generated_dogs_epoch_500.png" width="30%" />
+  <img src="images/generated_cats_epoch_500.png" width="30%" />
+  <img src="images/generated_lions_epoch_400.png" width="30%" />
+</p>
+
+<p align="center">
+  <img src="images/generated_elephants_epoch_520.png" width="30%" />
+  <img src="images/generated_horses_epoch_650.png" width="30%" />
+  <img src="images/generated_all_epoch_120.png" width="30%" />
+</p>
 
 ---
 
@@ -91,8 +103,10 @@ After training:
 
 ## Repository Structure
 
-- `GAN_model.ipynb` – Model implementation and training  
+- `GAN_model.ipynb` – DCGAN implementation and training notebook  
 - `images/` – Sample generated outputs  
+- `requirements.txt` – Project dependencies  
+- `README.md` – Project documentation  
 
 ---
 
@@ -115,4 +129,6 @@ source venv/bin/activate # Mac/Linux
 
 pip install -r requirements.txt
 
-4. Open `GAN_model.ipynb` and run all cells.
+4. Run the notebook:
+- Open `GAN_model.ipynb` and run all cells.
+- **Note:** The notebook includes Google Colab `drive.mount()` code. If running locally, comment out the Colab-only drive cell and adjust paths as needed.
